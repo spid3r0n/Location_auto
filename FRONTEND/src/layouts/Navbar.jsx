@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; // Ajout de useState et useEffect qui manquaient
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Car, User, LogIn } from 'lucide-react';
+import { Menu, X, Car, LogIn, Sparkles } from 'lucide-react';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -13,15 +13,14 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
   const navLinks = [
     { to: '/', label: 'Home' },
-    { to: '/#cars', label: 'Cars' },
-    { to: '/#benefits', label: 'Why Us' },
+    { to: '/cars', label: 'Cars' },
+    { to: '/whyus', label: 'Why Us' },
     { to: '/dashboard', label: 'Dashboard' },
   ];
 
@@ -29,33 +28,35 @@ export default function Navbar() {
 
   return (
     <nav
-      id="main-navbar"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-        ? 'py-3 glass shadow-lg shadow-black/20'
-        : 'py-5 bg-transparent'
-        }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? 'py-3 bg-[#050a18]/80 backdrop-blur-lg border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
+          : 'py-6 bg-transparent'
+      }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 no-underline group" id="nav-logo">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-electric-500 to-indigo-500 flex items-center justify-center shadow-glow transition-transform duration-300 group-hover:scale-110">
-            <Car className="w-5 h-5 text-white" />
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        
+        {/* Logo avec animation de survol */}
+        <Link to="/" className="flex items-center gap-3 group no-underline">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110">
+            <Car className="w-6 h-6 text-white" />
           </div>
-          <span className="text-xl font-bold font-[var(--font-heading)] text-white tracking-tight">
-            Auto<span className="text-gradient"> Loc</span>
+          <span className="text-2xl font-black text-white tracking-tighter italic uppercase">
+            Auto<span className="text-blue-500 not-italic">Loc</span>
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-1">
+        {/* Desktop Navigation - Style Pilule Moderne */}
+        <div className="hidden md:flex items-center gap-1 bg-white/5 p-1.5 rounded-2xl border border-white/5 backdrop-blur-md">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`px-4 py-2 rounded-lg text-sm font-medium no-underline transition-all duration-200 ${isActive(link.to)
-                ? 'text-electric-400 bg-electric-500/10'
-                : 'text-slate-300 hover:text-white hover:bg-white/5'
-                }`}
+              className={`px-5 py-2 rounded-xl text-sm font-semibold no-underline transition-all duration-300 ${
+                isActive(link.to)
+                  ? 'text-white bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.4)]'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
             >
               {link.label}
             </Link>
@@ -63,68 +64,58 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Auth Buttons */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-6">
           <Link
             to="/login"
-            id="nav-login"
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-300 hover:text-white no-underline transition-colors duration-200"
+            className="flex items-center gap-2 text-sm font-bold text-slate-300 hover:text-blue-400 no-underline transition-colors duration-300"
           >
             <LogIn className="w-4 h-4" />
             Login
           </Link>
+          
           <Link
             to="/register"
-            id="nav-register"
-            className="btn-primary !py-2 !px-5 !text-sm !rounded-lg"
+            className="relative group overflow-hidden bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold text-sm no-underline transition-all duration-300 hover:scale-105 hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] active:scale-95"
           >
-            <span>Sign Up</span>
+            {/* Effet de brillance (Shine) */}
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shine_1s_ease-in-out]" />
+            <span className="relative flex items-center gap-2">
+              <Sparkles className="w-4 h-4" />
+              Sign Up
+            </span>
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Toggle */}
         <button
-          id="mobile-menu-toggle"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors border-none bg-transparent cursor-pointer"
-          aria-label="Toggle menu"
+          className="md:hidden p-2 rounded-xl bg-white/5 text-white border-none cursor-pointer"
         >
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Menu Mobile avec animation d'entrée */}
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          }`}
+        className={`md:hidden absolute top-full left-0 w-full transition-all duration-300 ease-in-out ${
+          mobileOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'
+        }`}
       >
-        <div className="px-4 pt-2 pb-4 glass-light mt-2 mx-4 rounded-2xl border border-white/5">
+        <div className="mx-4 mt-2 p-4 bg-[#050a18]/95 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`block px-4 py-3 rounded-xl text-sm font-medium no-underline transition-all duration-200 ${isActive(link.to)
-                ? 'text-electric-400 bg-electric-500/10'
-                : 'text-slate-300 hover:text-white hover:bg-white/5'
-                }`}
+              className={`block px-4 py-4 rounded-2xl text-lg font-bold no-underline mb-1 ${
+                isActive(link.to) ? 'text-blue-400 bg-blue-500/10' : 'text-slate-300'
+              }`}
             >
               {link.label}
             </Link>
           ))}
-          <hr className="border-white/10 my-2" />
-          <div className="flex gap-2 mt-2">
-            <Link
-              to="/login"
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium text-slate-300 border border-white/10 no-underline hover:bg-white/5 transition-colors"
-            >
-              <LogIn className="w-4 h-4" />
-              Login
-            </Link>
-            <Link
-              to="/register"
-              className="flex-1 btn-primary !py-2.5 !text-sm !rounded-xl"
-            >
-              <span>Sign Up</span>
-            </Link>
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <Link to="/login" className="py-4 text-center rounded-2xl bg-white/5 text-white font-bold no-underline">Login</Link>
+            <Link to="/register" className="py-4 text-center rounded-2xl bg-blue-600 text-white font-bold no-underline">Sign Up</Link>
           </div>
         </div>
       </div>

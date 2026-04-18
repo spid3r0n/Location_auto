@@ -5,6 +5,8 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Whyus from './pages/Whyus';
+import Cars from './pages/Cars';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/whyus" element={<Whyus />} />
+          <Route path="/cars" element={<Cars />} />
         </Routes>
       </div>
       <Footer />
