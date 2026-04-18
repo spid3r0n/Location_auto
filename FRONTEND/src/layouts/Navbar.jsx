@@ -22,6 +22,7 @@ export default function Navbar() {
     { to: '/', label: 'Home' },
     { to: '/#cars', label: 'Cars' },
     { to: '/#benefits', label: 'Why Us' },
+    { to: '/dashboard', label: 'Dashboard' },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -29,11 +30,10 @@ export default function Navbar() {
   return (
     <nav
       id="main-navbar"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'py-3 glass shadow-lg shadow-black/20'
-          : 'py-5 bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+        ? 'py-3 glass shadow-lg shadow-black/20'
+        : 'py-5 bg-transparent'
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
@@ -42,7 +42,7 @@ export default function Navbar() {
             <Car className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold font-[var(--font-heading)] text-white tracking-tight">
-            Drive<span className="text-gradient">Fleet</span>
+            Auto<span className="text-gradient"> Loc</span>
           </span>
         </Link>
 
@@ -52,11 +52,10 @@ export default function Navbar() {
             <Link
               key={link.to}
               to={link.to}
-              className={`px-4 py-2 rounded-lg text-sm font-medium no-underline transition-all duration-200 ${
-                isActive(link.to)
-                  ? 'text-electric-400 bg-electric-500/10'
-                  : 'text-slate-300 hover:text-white hover:bg-white/5'
-              }`}
+              className={`px-4 py-2 rounded-lg text-sm font-medium no-underline transition-all duration-200 ${isActive(link.to)
+                ? 'text-electric-400 bg-electric-500/10'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+                }`}
             >
               {link.label}
             </Link>
@@ -95,20 +94,18 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          mobileOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}
+        className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${mobileOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
       >
         <div className="px-4 pt-2 pb-4 glass-light mt-2 mx-4 rounded-2xl border border-white/5">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`block px-4 py-3 rounded-xl text-sm font-medium no-underline transition-all duration-200 ${
-                isActive(link.to)
-                  ? 'text-electric-400 bg-electric-500/10'
-                  : 'text-slate-300 hover:text-white hover:bg-white/5'
-              }`}
+              className={`block px-4 py-3 rounded-xl text-sm font-medium no-underline transition-all duration-200 ${isActive(link.to)
+                ? 'text-electric-400 bg-electric-500/10'
+                : 'text-slate-300 hover:text-white hover:bg-white/5'
+                }`}
             >
               {link.label}
             </Link>
