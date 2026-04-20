@@ -84,9 +84,8 @@ export default function Dashboard() {
             
             <div className="space-y-4">
               {[
-                { name: "Driver's License", status: 'Verified', color: 'text-green-500' },
-                { name: "National ID", status: 'Verified', color: 'text-green-500' },
-                { name: "Proof of Insurance", status: 'Pending', color: 'text-yellow-500' },
+                { name: "Driver's License", status: 'Pending', color: 'text-red-500' },
+               
               ].map(doc => (
                 <div key={doc.name} className="flex items-center justify-between p-4 rounded-2xl bg-black/20 border border-white/5">
                   <div className="flex items-center gap-3">
@@ -98,11 +97,11 @@ export default function Dashboard() {
                       <div className={`text-[9px] font-black uppercase tracking-widest ${doc.color}`}>{doc.status}</div>
                     </div>
                   </div>
-                  {doc.status === 'Pending' && <button className="text-[9px] font-black text-blue-500 uppercase underline">Upload</button>}
+                  
                 </div>
               ))}
               <button className="w-full mt-4 py-4 rounded-2xl border-2 border-dashed border-white/10 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">
-                <Upload className="w-4 h-4" /> Upload New Document
+                <Upload className="w-4 h-4" /> Upload Document
               </button>
             </div>
           </motion.div>

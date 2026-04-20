@@ -14,6 +14,7 @@ export default function Navbar() {
     { name: 'Cars', path: '/fleet' },
     { name: 'Why Us', path: '/why-us' },
     { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Admin', path: '/admin' },
   ];
 
   return (
@@ -25,7 +26,7 @@ export default function Navbar() {
             <CarFront className="w-6 h-6 text-white" />
           </div>
           <span className={`text-xl font-black tracking-tighter uppercase ${current.text}`}>
-            AutoLoc<span className="text-blue-500 underline decoration-2 underline-offset-4">.</span>
+            Auto-Loc
           </span>
         </Link>
 
