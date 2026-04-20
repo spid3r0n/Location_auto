@@ -1,184 +1,122 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { 
-  ShieldCheck, CircleDollarSign, Clock, CarFront, 
-  ArrowRight, MousePointerClick, CalendarCheck, Key 
-} from "lucide-react";
+import { motion } from "framer-motion";
+import { Shield, Zap, Star, Globe, Clock, Heart } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
-const Whyus = () => {
-  const features = [
-    {
-      icon: <ShieldCheck size={32} />,
-      title: "Premium Insurance",
-      description: "Drive with absolute peace of mind with our fully comprehensive elite coverage.",
-      color: "from-blue-600 to-cyan-400"
-    },
-    {
-      icon: <CircleDollarSign size={32} />,
-      title: "Best Price",
-      description: "No hidden fees. We guarantee the most competitive luxury rates on the market.",
-      color: "from-indigo-600 to-blue-400"
-    },
-    {
-      icon: <Clock size={32} />,
-      title: "Quick Booking",
-      description: "Secure your dream vehicle in less than 120 seconds with our instant tech.",
-      color: "from-blue-500 to-indigo-500"
-    },
-    {
-      icon: <CarFront size={32} />,
-      title: "Wide Selection",
-      description: "From exclusive city cars to the rarest hypercars in the world.",
-      color: "from-cyan-500 to-blue-600"
-    }
-  ];
+const strengths = [
+  {
+    icon: Shield,
+    title: "Absolute Security",
+    desc: "Every vehicle in our fleet is maintained to aerospace standards. Your safety is our primary engineering requirement."
+  },
+  {
+    icon: Zap,
+    title: "Instant Access",
+    desc: "Our booking system uses real-time telemetry to ensure your vehicle is ready the second you arrive."
+  },
+  {
+    icon: Star,
+    title: "Elite Hangar",
+    desc: "We own one of the world's most curated automotive collections, ranging from vintage classics to hyper-prototypes."
+  },
+  {
+    icon: Globe,
+    title: "Global Network",
+    desc: "Access your membership benefits across 40 major cities worldwide with seamless cross-border service."
+  },
+  {
+    icon: Clock,
+    title: "24/7 Concierge",
+    desc: "A dedicated lifestyle manager is assigned to every member, ensuring no request is too small."
+  },
+  {
+    icon: Heart,
+    title: "Passion Driven",
+    desc: "We are more than a rental service. We are a community of enthusiasts dedicated to the art of the drive."
+  }
+];
 
-  const steps = [
-    { icon: <MousePointerClick />, title: "Select", desc: "Choose your vibe from 500+ elite models." },
-    { icon: <CalendarCheck />, title: "Reserve", desc: "Set your dates and confirm with one tap." },
-    { icon: <Key />, title: "Drive", desc: "Grab the keys and hit the road instantly." }
-  ];
+export default function WhyUs() {
+  const { current } = useTheme();
 
   return (
-    <section id="why-us" className="relative py-32 px-6 bg-[#020617] overflow-hidden font-sans">
-      
-      {/* BACKGROUND AMBIANCE */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 rounded-full blur-[120px]" />
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        
-        {/* --- HEADER --- */}
-        <div className="text-center mb-24">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/10 mb-8"
+    <main className={`min-h-screen ${current.bg} ${current.text} pt-40 pb-32 px-6`}>
+      <div className="max-w-7xl mx-auto">
+        {/* HERO SECTION */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-40">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
-            <span className="text-blue-400 font-black tracking-[0.3em] uppercase text-[10px]">AutoLoc Excellence</span>
+            <div className="text-blue-500 font-black text-xs uppercase tracking-[0.4em] mb-8">
+              The AutoLoc Philosophy
+            </div>
+            <h1 className="text-7xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8] mb-12">
+              EXCELLENCE<br />
+              <span className={`bg-clip-text text-transparent bg-gradient-to-r ${current.accent}`}>IS STANDARD.</span>
+            </h1>
+            <p className={`${current.subtext} text-xl md:text-2xl leading-relaxed max-w-xl font-light italic`}>
+              "We don't just provide cars; we provide the moments between where you are and where you want to be."
+            </p>
           </motion.div>
-          
-          <motion.h2 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            className="text-6xl md:text-8xl font-black text-white mb-8 tracking-tighter"
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+            className="relative aspect-square rounded-[3rem] overflow-hidden border border-white/5"
           >
-            WHY <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500">CHOOSE US?</span>
-          </motion.h2>
+            <img 
+              src="https://images.unsplash.com/photo-1614162692292-7acdb14a4411?auto=format&fit=crop&q=80&w=1200" 
+              alt="Luxury Car Interior" 
+              className="w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-32 h-32 rounded-full border border-white/20 backdrop-blur-3xl flex items-center justify-center">
+                 <Shield className="w-12 h-12 text-blue-500" />
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* --- CARDS GRID --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-40">
-          {features.map((item, index) => (
-            <motion.div 
-              key={index}
+        {/* STRENGTHS GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {strengths.map((s, i) => (
+            <motion.div
+              key={i}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
-              whileHover={{ y: -10 }}
-              className="group relative p-10 rounded-[3rem] bg-white/[0.02] border border-white/5 hover:border-blue-500/30 transition-all duration-500"
+              className={`p-10 rounded-[2.5rem] border ${current.card} hover:border-blue-500/30 transition-all duration-500 group`}
             >
-              <div className={`mb-8 p-5 w-fit rounded-[2rem] bg-gradient-to-br ${item.color} text-white shadow-2xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[10deg]`}>
-                {item.icon}
+              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 border border-white/5 group-hover:bg-blue-600 transition-colors">
+                <s.icon className="w-8 h-8 text-blue-500 group-hover:text-white transition-colors" />
               </div>
-
-              <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">{item.title}</h3>
-              <p className="text-gray-500 leading-relaxed mb-8 group-hover:text-gray-300 transition-colors">{item.description}</p>
-
-              <motion.div 
-                whileHover={{ x: 10 }}
-                className="flex items-center gap-3 text-blue-400 font-black text-[10px] uppercase tracking-widest cursor-pointer group-hover:text-blue-300"
-              >
-                Discover More <ArrowRight size={14} className="transition-transform" />
-              </motion.div>
+              <h3 className="text-2xl font-black uppercase tracking-tight mb-4">{s.title}</h3>
+              <p className={`${current.subtext} font-medium leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity`}>
+                {s.desc}
+              </p>
             </motion.div>
           ))}
         </div>
 
-        {/* --- HOW IT WORKS (THE STEPS) --- */}
-        <div className="relative pt-20 border-t border-white/5">
-          <div className="text-center mb-24">
-            <h3 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter">How to get <span className="text-blue-500">Started</span></h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 relative">
-            {/* Connection Line (Desktop) */}
-            <div className="hidden md:block absolute top-[45px] left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-
-            {steps.map((step, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.2 }}
-                viewport={{ once: true }}
-                className="relative z-10 flex flex-col items-center text-center group"
-              >
-                <div className="w-24 h-24 rounded-full bg-[#0a1025] border-2 border-blue-500/20 flex items-center justify-center text-blue-400 mb-8 group-hover:border-blue-500 group-hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] transition-all duration-500 bg-black">
-                  <motion.div 
-                    whileHover={{ scale: 1.2, rotate: 360 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                  >
-                    {React.cloneElement(step.icon, { size: 32 })}
-                  </motion.div>
-                  
-                  {/* Step Number Badge */}
-                  <span className="absolute -top-1 -right-1 w-9 h-9 rounded-full bg-blue-600 text-white text-[10px] font-black flex items-center justify-center border-4 border-[#020617] shadow-xl">
-                    0{i + 1}
-                  </span>
-                </div>
-                
-                <h4 className="text-xl font-black text-white uppercase mb-4 tracking-tighter group-hover:text-blue-400 transition-colors">
-                  {step.title}
-                </h4>
-                <p className="text-gray-500 text-sm max-w-[220px] leading-relaxed group-hover:text-gray-400">
-                  {step.desc}
-                </p>
-                
-                {/* Mobile Arrow */}
-                {i < 2 && (
-                  <div className="md:hidden my-8 text-blue-500/20">
-                    <ArrowRight size={24} className="rotate-90" />
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </div>
+        {/* QUOTE SECTION */}
+        <div className="mt-40 text-center max-w-4xl mx-auto">
+           <div className="w-1 h-24 bg-gradient-to-b from-blue-600 to-transparent mx-auto mb-12" />
+           <h2 className="text-4xl md:text-6xl font-serif italic font-light leading-snug mb-12">
+             "To drive an AutoLoc vehicle is to understand that the destination is merely a formality of the journey."
+           </h2>
+           <div className="flex items-center justify-center gap-6">
+              <div className="h-[1px] w-12 bg-white/20" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40">The Crafting Team</span>
+              <div className="h-[1px] w-12 bg-white/20" />
+           </div>
         </div>
-
-        {/* --- NUMBERS SECTION --- */}
-        <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-40 grid grid-cols-2 md:grid-cols-4 gap-8 p-16 rounded-[4rem] bg-white/[0.02] border border-white/5 backdrop-blur-xl relative overflow-hidden group hover:border-white/10 transition-colors duration-700"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-transparent to-purple-600/5" />
-          {[
-            { val: "500+", label: "Elite Cars" },
-            { val: "12k+", label: "Active Drivers" },
-            { val: "24/7", label: "VIP Support" },
-            { val: "0", label: "Paperwork" }
-          ].map((stat, i) => (
-            <div key={i} className="text-center relative z-10">
-              <motion.div 
-                initial={{ scale: 0.5 }}
-                whileInView={{ scale: 1 }}
-                className="text-5xl font-black text-white tracking-tighter mb-2"
-              >
-                {stat.val}
-              </motion.div>
-              <div className="text-blue-400 text-[10px] font-black uppercase tracking-[0.3em]">{stat.label}</div>
-            </div>
-          ))}
-        </motion.div>
-
       </div>
-    </section>
+    </main>
   );
-};
-
-export default Whyus;
+}
