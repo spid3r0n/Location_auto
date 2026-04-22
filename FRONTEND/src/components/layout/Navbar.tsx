@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LogIn, UserPlus, CarFront, Palette, Menu, X } from 'lucide-react';
+import { LogIn, UserPlus, CarFront, Palette, Menu, X, LogOut } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Navbar() {
   const { current, cycleTheme } = useTheme();
+  const { role, logout } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -13,9 +15,13 @@ export default function Navbar() {
     { name: 'Home', path: '/' },
     { name: 'Cars', path: '/fleet' },
     { name: 'Why Us', path: '/why-us' },
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Admin', path: '/admin' },
   ];
+
+  if (role === 'admin') {
+    navItems.push({ name: 'Admin', path: '/admin' });
+  } else {
+    navItems.push({ name: 'Dashboard', path: '/dashboard' });
+  }
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 px-6 py-8">
@@ -46,12 +52,23 @@ export default function Navbar() {
 
         {/* ACTIONS */}
         <div className="flex items-center gap-4 relative z-[60]">
-          <Link to="/login" className={`hidden sm:flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest hover:opacity-70 ${current.text}`}>
-            <LogIn className="w-4 h-4" /> Login
-          </Link>
-          <Link to="/register" className={`hidden md:flex px-6 py-3 rounded-full bg-white text-black text-[11px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-transform`}>
-            Join Club
-          </Link>
+          {role ? (
+            <button 
+              onClick={logout} 
+              className={`hidden sm:flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest hover:opacity-70 ${current.text}`}
+            >
+              <LogOut className="w-4 h-4" /> Logout
+            </button>
+          ) : (
+            <>
+              <Link to="/login" className={`hidden sm:flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest hover:opacity-70 ${current.text}`}>
+                <LogIn className="w-4 h-4" /> Login
+              </Link>
+              <Link to="/register" className={`hidden md:flex px-6 py-3 rounded-full bg-white text-black text-[11px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-transform`}>
+                Join Club
+              </Link>
+            </>
+          )}
           
           <button 
             onClick={cycleTheme}
@@ -93,20 +110,31 @@ export default function Navbar() {
             </div>
 
             <div className="mt-auto space-y-4">
-              <Link 
-                to="/login" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`flex items-center justify-center gap-2 w-full py-5 rounded-2xl border border-white/10 font-bold uppercase text-[11px] tracking-widest ${current.text}`}
-              >
-                <LogIn className="w-4 h-4" /> Login
-              </Link>
-              <Link 
-                to="/register" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 w-full py-5 rounded-2xl bg-white text-black font-black uppercase text-[11px] tracking-widest"
-              >
-                <UserPlus className="w-4 h-4" /> Join Club
-              </Link>
+              {role ? (
+                <button 
+                  onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                  className={`flex items-center justify-center gap-2 w-full py-5 rounded-2xl border border-white/10 font-bold uppercase text-[11px] tracking-widest ${current.text}`}
+                >
+                  <LogOut className="w-4 h-4" /> Logout
+                </button>
+              ) : (
+                <>
+                  <Link 
+                    to="/login" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`flex items-center justify-center gap-2 w-full py-5 rounded-2xl border border-white/10 font-bold uppercase text-[11px] tracking-widest ${current.text}`}
+                  >
+                    <LogIn className="w-4 h-4" /> Login
+                  </Link>
+                  <Link 
+                    to="/register" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full py-5 rounded-2xl bg-white text-black font-black uppercase text-[11px] tracking-widest"
+                  >
+                    <UserPlus className="w-4 h-4" /> Join Club
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}

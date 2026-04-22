@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from "framer-motion";
-import { Search, Filter, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { Search, Filter, SlidersHorizontal, ChevronDown, CarFront } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import CarCard from '../components/ui/CarCard';
 import { Car } from '../types';
@@ -73,5 +73,3 @@ export default function Fleet() {
     </div>
   );
 }
-
-import { CarFront } from 'lucide-react';

@@ -11,6 +11,7 @@ import {
   X,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface AdminNavItem {
   label: string;
@@ -77,14 +78,8 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
 export default function AdminLayout() {
   const { current } = useTheme();
+  const { role } = useAuth();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-
-  const role = useMemo(() => {
-    if (typeof window === 'undefined') {
-      return 'admin';
-    }
-    return window.localStorage.getItem('autoloc-role') ?? 'admin';
-  }, []);
 
   if (role !== 'admin') {
     return (
@@ -93,7 +88,7 @@ export default function AdminLayout() {
           <ShieldAlert className="w-12 h-12 mx-auto text-red-400 mb-4" />
           <h2 className="text-3xl font-black uppercase tracking-tight mb-3">Admin Access Required</h2>
           <p className="opacity-70 mb-8">
-            Your current role is <b>{role}</b>. Set <b>autoloc-role</b> to <b>admin</b> in local storage to view this area.
+            You do not have permission to view this area.
           </p>
           <Link
             to="/"
