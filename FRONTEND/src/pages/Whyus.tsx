@@ -40,82 +40,128 @@ export default function WhyUs() {
   const { current } = useTheme();
 
   return (
-    <main className={`min-h-screen ${current.bg} ${current.text} pt-40 pb-32 px-6`}>
-      <div className="max-w-7xl mx-auto">
-        {/* HERO SECTION */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-40">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="text-blue-500 font-black text-xs uppercase tracking-[0.4em] mb-8">
-              The AutoLoc Philosophy
-            </div>
-            <h1 className="text-7xl md:text-9xl font-black tracking-tighter uppercase leading-[0.8] mb-12">
-              EXCELLENCE<br />
-              <span className={`bg-clip-text text-transparent bg-gradient-to-r ${current.accent}`}>IS STANDARD.</span>
-            </h1>
-            <p className={`${current.subtext} text-xl md:text-2xl leading-relaxed max-w-xl font-light italic`}>
-              "We don't just provide cars; we provide the moments between where you are and where you want to be."
-            </p>
-          </motion.div>
+    <main className={`min-h-screen ${current.bg} ${current.text} relative overflow-hidden pb-10`}>
+      {/* Dynamic Background Orbs */}
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-900/10 to-transparent pointer-events-none" />
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.1, 0.2, 0.1],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-blue-600/30 blur-[150px] rounded-full pointer-events-none"
+      />
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.5, 1],
+          opacity: [0.1, 0.15, 0.1],
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        className="absolute bottom-[20%] left-[-10%] w-[500px] h-[500px] bg-indigo-600/20 blur-[150px] rounded-full pointer-events-none"
+      />
 
+      <div className="max-w-7xl mx-auto px-6 pt-40 relative z-10">
+        
+        {/* Simple & Creative Hero */}
+        <div className="text-center mb-40">
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1 }}
-            className="relative aspect-square rounded-[3rem] overflow-hidden border border-white/5"
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-blue-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-10 backdrop-blur-md"
           >
-            <img 
-              src="https://images.unsplash.com/photo-1614162692292-7acdb14a4411?auto=format&fit=crop&q=80&w=1200" 
-              alt="Luxury Car Interior" 
-              className="w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0"
-              referrerPolicy="no-referrer"
-            />
-            <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-32 h-32 rounded-full border border-white/20 backdrop-blur-3xl flex items-center justify-center">
-                 <Shield className="w-12 h-12 text-blue-500" />
-              </div>
-            </div>
+             <Star className="w-3 h-3" /> The Standard of Excellence
           </motion.div>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.9] mb-8"
+          >
+            Beyond <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-600">
+              Expectations.
+            </span>
+          </motion.h1>
+          
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className={`max-w-2xl mx-auto text-lg md:text-xl ${current.subtext} font-light leading-relaxed`}
+          >
+            We don't just rent cars. We curate an automotive experience designed to elevate every journey. Simple, seamless, and unmistakably premium.
+          </motion.p>
         </div>
 
-        {/* STRENGTHS GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {strengths.map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
+        {/* Sticky Scroll Section */}
+        <div className="flex flex-col lg:flex-row gap-20 items-start">
+          {/* Left Sticky Content */}
+          <div className="lg:sticky lg:top-40 lg:w-1/3">
+            <motion.h2 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className={`p-10 rounded-[2.5rem] border ${current.card} hover:border-blue-500/30 transition-all duration-500 group`}
+              className="text-4xl md:text-5xl font-black tracking-tight uppercase mb-6 leading-none"
             >
-              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 border border-white/5 group-hover:bg-blue-600 transition-colors">
-                <s.icon className="w-8 h-8 text-blue-500 group-hover:text-white transition-colors" />
-              </div>
-              <h3 className="text-2xl font-black uppercase tracking-tight mb-4">{s.title}</h3>
-              <p className={`${current.subtext} font-medium leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity`}>
-                {s.desc}
-              </p>
-            </motion.div>
-          ))}
+              Our Core <br/><span className="text-blue-500">Pillars</span>
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className={`${current.subtext} mb-8 leading-relaxed text-lg`}
+            >
+              Every detail is engineered to perfection. From our diverse fleet to our 24/7 concierge, we ensure your ride is flawless.
+            </motion.p>
+            <motion.div 
+              initial={{ width: 0 }}
+              whileInView={{ width: 64 }}
+              viewport={{ once: true }}
+              className="h-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full" 
+            />
+          </div>
+
+          {/* Right Scrollable Cards */}
+          <div className="lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {strengths.map((s, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: (i % 2) * 0.1, duration: 0.5 }}
+                className={`p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-xl hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(37,99,235,0.1)] transition-all duration-300 group`}
+              >
+                <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-blue-600 group-hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all duration-300 border border-white/5">
+                  <s.icon className="w-6 h-6 text-blue-400 group-hover:text-white transition-colors" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 tracking-tight">{s.title}</h3>
+                <p className={`text-sm ${current.subtext} leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity`}>
+                  {s.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
-        {/* QUOTE SECTION */}
-        <div className="mt-40 text-center max-w-4xl mx-auto">
-           <div className="w-1 h-24 bg-gradient-to-b from-blue-600 to-transparent mx-auto mb-12" />
-           <h2 className="text-4xl md:text-6xl font-serif italic font-light leading-snug mb-12">
-             "To drive an AutoLoc vehicle is to understand that the destination is merely a formality of the journey."
-           </h2>
-           <div className="flex items-center justify-center gap-6">
-              <div className="h-[1px] w-12 bg-white/20" />
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40">The Crafting Team</span>
-              <div className="h-[1px] w-12 bg-white/20" />
-           </div>
-        </div>
+        {/* Minimal Quote Footer */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="mt-40 text-center max-w-4xl mx-auto py-20 relative"
+        >
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-20 bg-gradient-to-b from-transparent via-blue-500/50 to-transparent" />
+          <Zap className="w-8 h-8 text-blue-500 mx-auto mb-8 opacity-50" />
+          <h2 className="text-3xl md:text-5xl font-light italic leading-snug mb-10 text-white/90">
+            "To drive an AutoLoc vehicle is to understand that the destination is merely a formality of the journey."
+          </h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500">
+            — The AutoLoc Engineers
+          </p>
+        </motion.div>
+
       </div>
     </main>
   );

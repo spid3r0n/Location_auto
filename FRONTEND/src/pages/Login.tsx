@@ -7,11 +7,14 @@ import {
   CarFront, Shield, Zap, CircleDollarSign, LogIn
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
   const { current } = useTheme();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
@@ -20,7 +23,8 @@ export default function Login() {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      navigate('/dashboard');
+      login(isAdmin ? 'admin' : 'user');
+      navigate(isAdmin ? '/admin' : '/dashboard');
     }, 1500);
   };
 
@@ -85,6 +89,18 @@ export default function Login() {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+            </div>
+
+            <div className="flex items-center gap-3 py-2">
+              <input 
+                type="checkbox" 
+                checked={isAdmin}
+                onChange={(e) => setIsAdmin(e.target.checked)}
+                className="w-4 h-4 rounded border-white/10 bg-white/5" 
+              />
+              <p className="text-[11px] font-medium opacity-60 text-blue-400">
+                Login as Admin (Demo)
+              </p>
             </div>
 
             <button 

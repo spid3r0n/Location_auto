@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
@@ -18,24 +19,30 @@ import AdminBookings from './pages/admin/AdminBookings';
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const { role } = useAuth();
 
   return (
     <AnimatePresence mode="wait">
       <Routes location={location}>
         <Route path="/" element={<Landing />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={role === 'admin' ? <Navigate to="/admin" replace /> : <Dashboard />} />
         <Route path="/fleet" element={<Fleet />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/why-us" element={<WhyUs />} />
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="dashboard" element={<Navigate to="/admin" replace />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="vehicles" element={<AdminVehicles />} />
-          <Route path="bookings" element={<AdminBookings />} />
-        </Route>
+        
+        {role === 'admin' ? (
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="dashboard" element={<Navigate to="/admin" replace />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="vehicles" element={<AdminVehicles />} />
+            <Route path="bookings" element={<AdminBookings />} />
+          </Route>
+        ) : (
+          <Route path="/admin/*" element={<Navigate to="/dashboard" replace />} />
+        )}
       </Routes>
     </AnimatePresence>
   );
@@ -55,10 +62,12 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }

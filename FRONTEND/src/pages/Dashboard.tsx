@@ -85,7 +85,6 @@ export default function Dashboard() {
             <div className="space-y-4">
               {[
                 { name: "Driver's License", status: 'Pending', color: 'text-red-500' },
-               
               ].map(doc => (
                 <div key={doc.name} className="flex items-center justify-between p-4 rounded-2xl bg-black/20 border border-white/5">
                   <div className="flex items-center gap-3">
@@ -97,7 +96,6 @@ export default function Dashboard() {
                       <div className={`text-[9px] font-black uppercase tracking-widest ${doc.color}`}>{doc.status}</div>
                     </div>
                   </div>
-                  
                 </div>
               ))}
               <button className="w-full mt-4 py-4 rounded-2xl border-2 border-dashed border-white/10 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">
