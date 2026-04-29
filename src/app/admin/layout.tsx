@@ -28,6 +28,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="h-full flex flex-col">
       <div className="px-6 pt-8 pb-6 border-b border-white/10">
+      {/* anes{bsa7tek_el_flag} */}
         <Link href="/" className="inline-flex items-center gap-3 group" onClick={onNavigate}>
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.4)]">
             <CarFront className="w-5 h-5 text-white" />
