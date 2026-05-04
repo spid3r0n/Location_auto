@@ -52,7 +52,7 @@ const CarCard: React.FC<CarCardProps> = ({ car, theme }) => {
         </div>
 
         <Link
-          href="/booking"
+          href={`/booking?car=${encodeURIComponent(car.id)}`}
           className="block w-full py-5 border border-blue-500/40 text-blue-400 hover:bg-blue-500 hover:text-white transition-all rounded-3xl font-black uppercase text-[10px] tracking-[0.4em] text-center"
         >
           Request Booking

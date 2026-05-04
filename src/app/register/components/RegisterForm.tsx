@@ -10,20 +10,33 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function RegisterForm() {
   const { current } = useTheme();
-  const { login } = useAuth();
+  const { register } = useAuth();
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      login(isAdmin ? 'admin' : 'user');
-      router.push(isAdmin ? '/admin' : '/dashboard');
-    }, 1500);
+    setError(null);
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    const result = register({
+      name: fullName,
+      email,
+      phone,
+      password,
+    });
+    setIsLoading(false);
+    if (!result.ok) {
+      setError(result.error ?? 'Unable to create account.');
+      return;
+    }
+    router.push('/dashboard');
   };
 
   return (
@@ -48,6 +61,9 @@ export default function RegisterForm() {
               <input
                 type="text"
                 required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                autoComplete="name"
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="John Doe"
               />
@@ -61,6 +77,9 @@ export default function RegisterForm() {
               <input
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="your@email.com"
               />
@@ -74,6 +93,9 @@ export default function RegisterForm() {
               <input
                 type="tel"
                 required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                autoComplete="tel"
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="+1 (555) 123-4567"
               />
@@ -87,6 +109,9 @@ export default function RegisterForm() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
                 className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="••••••••"
               />
@@ -100,18 +125,11 @@ export default function RegisterForm() {
             </div>
           </div>
 
-          <div className="flex items-center">
-            <input
-              id="isAdmin"
-              type="checkbox"
-              checked={isAdmin}
-              onChange={(e) => setIsAdmin(e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <label htmlFor="isAdmin" className="ml-2 text-sm text-gray-600">
-              Register as admin
-            </label>
-          </div>
+          {error && (
+            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
@@ -135,6 +153,12 @@ export default function RegisterForm() {
               Sign in here
             </Link>
           </p>
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-2">Demo Accounts</p>
+          <p className="text-sm">Admin: admin@autoloc.demo / Admin123!</p>
+          <p className="text-sm">User: user@autoloc.demo / User123!</p>
         </div>
       </motion.div>
     </div>

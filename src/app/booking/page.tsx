@@ -1,28 +1,100 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   ChevronLeft, Calendar, ShieldCheck,
   Info, MapPin, CheckCircle2
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
+import { useAuth } from '@/context/AuthContext';
+import { listAdminVehicles } from '@/services/adminApi';
+import { createUserReservation } from '@/services/reservationStore';
+import { Car } from '@/types';
+
+const fallbackCar: Car = {
+  id: 'demo-car',
+  name: 'Porsche 911 GT3',
+  type: 'Sport',
+  image: 'https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  pricePerDay: 450,
+  seats: 2,
+  fuel: 'Petrol',
+  power: '503 HP',
+  transmission: 'Auto',
+};
+
+const parseDuration = (value: string) => {
+  const cleaned = value.trim();
+  if (!cleaned) return { startDate: 'Flexible', endDate: 'Flexible' };
+  const parts = cleaned.split(/\s*-\s*/);
+  if (parts.length >= 2) {
+    return { startDate: parts[0].trim(), endDate: parts.slice(1).join(' - ').trim() };
+  }
+  return { startDate: cleaned, endDate: 'Flexible' };
+};
 
 export default function Booking() {
   const { current } = useTheme();
+  const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const carId = searchParams?.get('car');
   const [step, setStep] = useState(1);
+  const [car, setCar] = useState<Car>(fallbackCar);
+  const [pickupLocation, setPickupLocation] = useState('London Luxury Garage');
+  const [duration, setDuration] = useState('Oct 20 - Oct 22');
+  const [loadingCar, setLoadingCar] = useState(true);
 
-  const car = {
-    name: 'Porsche 911 GT3',
-    price: 450,
-    image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80'
-  };
+  useEffect(() => {
+    let active = true;
+    const loadCar = async () => {
+      setLoadingCar(true);
+      try {
+        const response = await listAdminVehicles();
+        const mapped = response.data.map((vehicle) => ({
+          id: vehicle.id,
+          name: vehicle.name,
+          type: vehicle.type,
+          image: vehicle.image,
+          pricePerDay: vehicle.pricePerDay,
+          seats: vehicle.seats,
+          fuel: vehicle.fuel,
+          power: 'N/A',
+          transmission: vehicle.transmission,
+        }));
+        const selected = carId ? mapped.find((item) => item.id === carId) : mapped[0];
+        if (active && selected) setCar(selected);
+      } catch {
+        if (active) setCar(fallbackCar);
+      } finally {
+        if (active) setLoadingCar(false);
+      }
+    };
+    void loadCar();
+    return () => { active = false; };
+  }, [carId]);
+
+  const baseDays = useMemo(() => 2, []);
+  const totalCost = useMemo(() => car.pricePerDay * baseDays + 45, [car.pricePerDay, baseDays]);
 
   const handleNext = () => {
-    if (step < 2) setStep(step + 1);
-    else router.push('/dashboard');
+    if (step < 2) {
+      const { startDate, endDate } = parseDuration(duration);
+      const userId = user?.id ?? 'guest';
+      createUserReservation(userId, {
+        carName: car.name,
+        image: car.image,
+        startDate,
+        endDate,
+        total: totalCost,
+        status: 'ongoing',
+      });
+      setStep(step + 1);
+    } else {
+      router.push('/dashboard');
+    }
   };
 
   return (
@@ -55,14 +127,26 @@ export default function Booking() {
                       <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-2">Pickup Location</label>
                       <div className="relative group">
                         <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
-                        <input type="text" placeholder="London Luxury Garage" className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-sm outline-none focus:border-blue-500/50 transition-all" />
+                        <input
+                          type="text"
+                          value={pickupLocation}
+                          onChange={(event) => setPickupLocation(event.target.value)}
+                          placeholder="London Luxury Garage"
+                          className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-sm outline-none focus:border-blue-500/50 transition-all"
+                        />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-2">Duration</label>
                       <div className="relative group">
                         <Calendar className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" />
-                        <input type="text" placeholder="Oct 20 - Oct 22" className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-sm outline-none focus:border-blue-500/50 transition-all" />
+                        <input
+                          type="text"
+                          value={duration}
+                          onChange={(event) => setDuration(event.target.value)}
+                          placeholder="Oct 20 - Oct 22"
+                          className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-sm outline-none focus:border-blue-500/50 transition-all"
+                        />
                       </div>
                     </div>
                   </div>
@@ -106,18 +190,21 @@ export default function Booking() {
                   <div>
                     <h4 className="text-[10px] font-black uppercase tracking-widest opacity-40 mb-1">Selected Vehicle</h4>
                     <p className="text-xl font-bold uppercase tracking-tight">{car.name}</p>
+                    {loadingCar && (
+                      <p className={`text-[10px] uppercase tracking-widest mt-2 ${current.subtext}`}>Loading details...</p>
+                    )}
                   </div>
                   <div className="p-2 rounded-xl bg-white/5 border border-white/5">
                     <ShieldCheck className="w-5 h-5 text-blue-500" />
                   </div>
                 </div>
                 <div className="space-y-4 pt-6 border-t border-white/5">
-                  <div className="flex justify-between text-sm font-bold opacity-60"><span>Base Fare (2 Days)</span><span>${car.price * 2}</span></div>
+                  <div className="flex justify-between text-sm font-bold opacity-60"><span>Base Fare ({baseDays} Days)</span><span>${car.pricePerDay * baseDays}</span></div>
                   <div className="flex justify-between text-sm font-bold opacity-60"><span>Priority Service</span><span>$45</span></div>
                   <div className="flex justify-between text-sm font-bold opacity-60"><span>Insurance</span><span className="text-green-500">Free</span></div>
                   <div className="flex justify-between pt-4 border-t border-white/10">
                     <span className="text-sm font-black uppercase tracking-widest">Total cost</span>
-                    <span className="text-2xl font-black tracking-tighter">${car.price * 2 + 45}</span>
+                    <span className="text-2xl font-black tracking-tighter">${totalCost}</span>
                   </div>
                 </div>
               </div>

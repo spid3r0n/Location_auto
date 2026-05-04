@@ -17,12 +17,52 @@ let usersDb: AdminUser[] = [
   { id: 'USR-1004', name: 'Ethan Cole', email: 'ethan.cole@example.com', phone: '+44 20 7946 3921', role: 'user', status: 'suspended', createdAt: '2025-09-02' },
 ];
 
-let vehiclesDb: AdminVehicle[] = [
-  { id: 'VEH-001', name: 'BMW 5 Series', type: 'Sedan', image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80', pricePerDay: 89, seats: 5, fuel: 'Petrol', transmission: 'Auto', status: 'available', approval: 'approved', updatedAt: '2026-04-10' },
-  { id: 'VEH-002', name: 'Mercedes GLE', type: 'SUV', image: 'https://images.unsplash.com/photo-1606611013016-969c19ba27d5?w=800&q=80', pricePerDay: 120, seats: 7, fuel: 'Diesel', transmission: 'Auto', status: 'available', approval: 'approved', updatedAt: '2026-04-12' },
-  { id: 'VEH-003', name: 'Porsche 911', type: 'Sport', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80', pricePerDay: 220, seats: 2, fuel: 'Petrol', transmission: 'Manual', status: 'unavailable', approval: 'pending', updatedAt: '2026-04-08' },
-  { id: 'VEH-004', name: 'Audi RS6', type: 'Avant', image: 'https://images.unsplash.com/photo-1603501092305-649033339e1a?w=800&q=80', pricePerDay: 180, seats: 5, fuel: 'Petrol', transmission: 'Auto', status: 'available', approval: 'rejected', updatedAt: '2026-04-01' },
+const VEHICLES_KEY = 'demoVehicles';
+
+const seedVehicles = (): AdminVehicle[] => [
+  { id: 'VEH-001', name: 'BMW 5 Series', type: 'Sedan', image: 'https://images.pexels.com/photos/244206/pexels-photo-244206.jpeg?auto=compress&cs=tinysrgb&w=1200', pricePerDay: 89, seats: 5, fuel: 'Petrol', transmission: 'Auto', status: 'available', approval: 'approved', updatedAt: '2026-04-10' },
+  { id: 'VEH-002', name: 'Mercedes GLE', type: 'SUV', image: 'https://images.pexels.com/photos/116675/pexels-photo-116675.jpeg?auto=compress&cs=tinysrgb&w=1200', pricePerDay: 120, seats: 7, fuel: 'Diesel', transmission: 'Auto', status: 'available', approval: 'approved', updatedAt: '2026-04-12' },
+  { id: 'VEH-003', name: 'Porsche 911', type: 'Sport', image: 'https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg?auto=compress&cs=tinysrgb&w=1200', pricePerDay: 220, seats: 2, fuel: 'Petrol', transmission: 'Manual', status: 'available', approval: 'approved', updatedAt: '2026-04-08' },
+  { id: 'VEH-004', name: 'Audi RS6', type: 'Avant', image: 'https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&w=1200', pricePerDay: 180, seats: 5, fuel: 'Petrol', transmission: 'Auto', status: 'available', approval: 'approved', updatedAt: '2026-04-01' },
+  { id: 'VEH-005', name: 'Tesla Model S', type: 'Electric', image: 'https://images.pexels.com/photos/799443/pexels-photo-799443.jpeg?auto=compress&cs=tinysrgb&w=1200', pricePerDay: 150, seats: 5, fuel: 'Electric', transmission: 'Direct', status: 'available', approval: 'approved', updatedAt: '2026-04-05' },
+  { id: 'VEH-006', name: 'Range Rover', type: 'SUV', image: 'https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg?auto=compress&cs=tinysrgb&w=1200', pricePerDay: 140, seats: 5, fuel: 'Hybrid', transmission: 'Auto', status: 'available', approval: 'approved', updatedAt: '2026-04-03' },
 ];
+
+let vehiclesDb: AdminVehicle[] = seedVehicles();
+
+const ensureVehicles = () => {
+  if (typeof window === 'undefined') return;
+  const stored = localStorage.getItem(VEHICLES_KEY);
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored) as AdminVehicle[];
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const seedMap = new Map(seedVehicles().map((item) => [item.id, item.image]));
+        const migrated = parsed.map((item) => {
+          const seedImage = seedMap.get(item.id);
+          if (seedImage && item.image.includes('unsplash.com')) {
+            return { ...item, image: seedImage };
+          }
+          return item;
+        });
+        vehiclesDb = migrated;
+        const changed = migrated.some((item, index) => item.image !== parsed[index].image);
+        if (changed) {
+          localStorage.setItem(VEHICLES_KEY, JSON.stringify(migrated));
+        }
+        return;
+      }
+    } catch {
+      // fall through to reseed
+    }
+  }
+  localStorage.setItem(VEHICLES_KEY, JSON.stringify(vehiclesDb));
+};
+
+const persistVehicles = () => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(VEHICLES_KEY, JSON.stringify(vehiclesDb));
+};
 
 let bookingsDb: AdminBooking[] = [
   { id: 'BKG-9001', userName: 'Nora Bennett', userEmail: 'nora.bennett@example.com', vehicleName: 'BMW 5 Series', startDate: '2026-04-22', endDate: '2026-04-26', total: 356, status: 'confirmed', createdAt: '2026-04-17' },
@@ -48,6 +88,7 @@ const sortVehiclesByUpdatedAtDesc = (items: AdminVehicle[]): AdminVehicle[] =>
   [...items].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 
 const nextVehicleId = (): string => {
+  ensureVehicles();
   const max = vehiclesDb.reduce((acc, item) => {
     const number = Number(item.id.replace('VEH-', ''));
     return Number.isNaN(number) ? acc : Math.max(acc, number);
@@ -57,6 +98,7 @@ const nextVehicleId = (): string => {
 
 export async function getAdminDashboard(): Promise<AdminApiResponse<AdminDashboardPayload>> {
   await delay();
+  ensureVehicles();
   const pendingListings = vehiclesDb.filter((item) => item.approval === 'pending').length;
   const pendingBookings = bookingsDb.filter((item) => item.status === 'pending').length;
   const activeUsers = usersDb.filter((item) => item.status === 'active').length;
@@ -97,6 +139,7 @@ export async function deleteAdminUser(id: string): Promise<AdminApiResponse<{ id
 
 export async function listAdminVehicles(search = ''): Promise<AdminApiResponse<AdminVehicle[]>> {
   await delay();
+  ensureVehicles();
   const keyword = search.trim().toLowerCase();
   const data = keyword ? vehiclesDb.filter((item) => `${item.name} ${item.type} ${item.id}`.toLowerCase().includes(keyword)) : vehiclesDb;
   return wrap('/admin/vehicles', clone(sortVehiclesByUpdatedAtDesc(data)));
@@ -104,38 +147,48 @@ export async function listAdminVehicles(search = ''): Promise<AdminApiResponse<A
 
 export async function createAdminVehicle(input: Omit<AdminVehicle, 'id' | 'updatedAt'>): Promise<AdminApiResponse<AdminVehicle>> {
   await delay();
+  ensureVehicles();
   const next: AdminVehicle = { ...input, id: nextVehicleId(), updatedAt: new Date().toISOString().slice(0, 10) };
   vehiclesDb = [next, ...vehiclesDb];
+  persistVehicles();
   return wrap('/admin/vehicles', clone(next));
 }
 
 export async function updateAdminVehicle(id: string, patch: Partial<Omit<AdminVehicle, 'id'>>): Promise<AdminApiResponse<AdminVehicle>> {
   await delay();
+  ensureVehicles();
   const found = findById(vehiclesDb, id, 'Vehicle');
   Object.assign(found, patch, { updatedAt: new Date().toISOString().slice(0, 10) });
+  persistVehicles();
   return wrap(`/admin/vehicles/${id}`, clone(found));
 }
 
 export async function setVehicleApproval(id: string, approval: VehicleApproval): Promise<AdminApiResponse<AdminVehicle>> {
   await delay();
+  ensureVehicles();
   const found = findById(vehiclesDb, id, 'Vehicle');
   found.approval = approval;
   found.updatedAt = new Date().toISOString().slice(0, 10);
+  persistVehicles();
   return wrap(`/admin/vehicles/${id}/approval`, clone(found));
 }
 
 export async function setVehicleAvailability(id: string, status: AdminVehicle['status']): Promise<AdminApiResponse<AdminVehicle>> {
   await delay();
+  ensureVehicles();
   const found = findById(vehiclesDb, id, 'Vehicle');
   found.status = status;
   found.updatedAt = new Date().toISOString().slice(0, 10);
+  persistVehicles();
   return wrap(`/admin/vehicles/${id}/availability`, clone(found));
 }
 
 export async function deleteAdminVehicle(id: string): Promise<AdminApiResponse<{ id: string }>> {
   await delay();
+  ensureVehicles();
   findById(vehiclesDb, id, 'Vehicle');
   vehiclesDb = vehiclesDb.filter((item) => item.id !== id);
+  persistVehicles();
   return wrap(`/admin/vehicles/${id}`, { id });
 }
 

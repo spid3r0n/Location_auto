@@ -18,6 +18,7 @@ export default function Navbar() {
     { name: 'Home', path: '/' },
     { name: 'Cars', path: '/fleet' },
     { name: 'Why Us', path: '/why-us' },
+    { name: 'List Your Car', path: '/host' },
   ];
 
   if (role === 'admin') {

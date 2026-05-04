@@ -22,7 +22,7 @@ export default function CTA({ theme }: CTAProps) {
           className="absolute top-1/2 -translate-y-1/2 w-[800px] pointer-events-none mix-blend-overlay z-0"
         >
           <img
-            src="https://images.unsplash.com/photo-1614162692292-7acdb14a4411?auto=format&fit=crop&q=80&w=1200"
+            src="https://images.pexels.com/photos/1402787/pexels-photo-1402787.jpeg?auto=compress&cs=tinysrgb&w=1400"
             alt="Elite Vehicle"
             className="w-full h-auto grayscale filter brightness-200"
             referrerPolicy="no-referrer"

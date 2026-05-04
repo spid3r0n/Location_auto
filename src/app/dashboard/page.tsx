@@ -1,23 +1,39 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import {
   User, Mail, Phone, ShieldCheck,
   Clock, Calendar, CreditCard, ChevronRight,
-  TrendingUp, Activity, FileText, Upload
+  TrendingUp, Activity, FileText, Upload, CarFront
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
+import { useAuth } from '@/context/AuthContext';
 import { Reservation } from '@/types';
+import { listUserReservations } from '@/services/reservationStore';
 
 const mockReservations: Reservation[] = [
-  { id: 'RES-9042', carName: 'Tesla Model 3', image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&q=80', startDate: 'Oct 15', endDate: 'Oct 20, 2023', total: 600, status: 'completed' },
-  { id: 'RES-8821', carName: 'Tesla Model 3', image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&q=80', startDate: 'Nov 02', endDate: 'Nov 05, 2023', total: 285, status: 'ongoing' },
-  { id: 'RES-9105', carName: 'Audi A4', image: 'https://images.unsplash.com/photo-1541348263662-e0c8de4259ba?w=400&q=80', startDate: 'Dec 10', endDate: 'Dec 12, 2023', total: 150, status: 'cancelled' },
+ 
 ];
 
 export default function Dashboard() {
   const { current } = useTheme();
+  const { user } = useAuth();
+  const [licenseFile, setLicenseFile] = useState<File | null>(null);
+  const licenseStatus = licenseFile ? 'Uploaded' : 'Pending';
+  const licenseStatusClass = licenseFile ? 'text-green-500' : 'text-red-500';
+  const [reservations, setReservations] = useState<Reservation[]>(mockReservations);
+
+  useEffect(() => {
+    const userId = user?.id ?? 'guest';
+    const stored = listUserReservations(userId);
+    if (stored.length > 0) {
+      setReservations([...stored, ...mockReservations]);
+    } else {
+      setReservations(mockReservations);
+    }
+  }, [user?.id]);
 
   return (
     <div className={`min-h-screen pt-32 pb-20 px-6 ${current.bg} ${current.text}`}>
@@ -36,22 +52,22 @@ export default function Dashboard() {
                 <div className="w-full h-full rounded-full bg-blue-500 overflow-hidden">
                   <img
                     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"
-                    alt="John Doe"
+                    alt="medou yakoub"
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
                 </div>
               </div>
-              <h2 className="text-3xl font-black tracking-tight mb-2 uppercase">John Doe</h2>
+              <h2 className="text-3xl font-black tracking-tight mb-2 uppercase">Medou yakoub</h2>
               <div className="flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full mb-8">
                 <ShieldCheck className="w-3 h-3 text-green-500" />
                 <span className="text-[10px] font-bold text-green-500 uppercase tracking-widest">Verified Member</span>
               </div>
               <div className="w-full space-y-6 text-left">
                 {[
-                  { label: 'Full Name', value: 'John Doe', Icon: User },
-                  { label: 'Email Address', value: 'john.doe@example.com', Icon: Mail },
-                  { label: 'Phone Number', value: '+1 (555) 123-4567', Icon: Phone },
+                  { label: 'Full Name', value: 'Medou yakoub', Icon: User },
+                  { label: 'Email Address', value: 'yakoubmaddou001@gmail.com', Icon: Mail },
+                  { label: 'Phone Number', value: '0540769102', Icon: Phone },
                 ].map(({ label, value, Icon }) => (
                   <div key={label} className="space-y-1">
                     <span className={`text-[10px] font-bold tracking-[0.2em] uppercase ${current.subtext}`}>{label}</span>
@@ -77,18 +93,31 @@ export default function Dashboard() {
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 rounded-2xl bg-black/20 border border-white/5">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-current/5 text-red-500">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center bg-current/5 ${licenseFile ? 'text-green-500' : 'text-red-500'}`}>
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
                     <div className="text-xs font-bold">Driver&apos;s License</div>
-                    <div className="text-[9px] font-black uppercase tracking-widest text-red-500">Pending</div>
+                    <div className={`text-[9px] font-black uppercase tracking-widest ${licenseStatusClass}`}>{licenseStatus}</div>
+                    {licenseFile && (
+                      <div className={`text-[10px] mt-1 ${current.subtext}`}>{licenseFile.name}</div>
+                    )}
                   </div>
                 </div>
               </div>
-              <button className="w-full mt-4 py-4 rounded-2xl border-2 border-dashed border-white/10 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all">
-                <Upload className="w-4 h-4" /> Upload Document
-              </button>
+              <input
+                id="license-upload"
+                type="file"
+                accept="image/*,application/pdf"
+                className="hidden"
+                onChange={(event) => setLicenseFile(event.target.files?.[0] ?? null)}
+              />
+              <label
+                htmlFor="license-upload"
+                className="w-full mt-4 py-4 rounded-2xl border-2 border-dashed border-white/10 flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all cursor-pointer"
+              >
+                <Upload className="w-4 h-4" /> {licenseFile ? 'Replace Document' : 'Upload Document'}
+              </label>
             </div>
           </motion.div>
         </div>
@@ -117,6 +146,37 @@ export default function Dashboard() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className={`relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 border ${current.card}`}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-transparent pointer-events-none" />
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div>
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-3">
+                  <CarFront className="w-4 h-4" /> Host Program
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tight mb-2">List Your Vehicle</h3>
+                <p className={`${current.subtext} text-sm max-w-xl`}>
+                  Turn your car into income. Submit your listing in minutes and get approved fast.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <div className={`rounded-2xl border ${current.card} px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em]`}>
+                  Avg. earning $1,240/mo
+                </div>
+                <Link
+                  href="/host"
+                  className={`rounded-2xl px-5 py-4 text-[10px] font-black uppercase tracking-[0.2em] ${current.btn}`}
+                >
+                  Start Listing
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
             className={`flex-1 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 border ${current.card}`}
           >
@@ -125,7 +185,7 @@ export default function Dashboard() {
               <button className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 border-b border-blue-500/30">View All History</button>
             </div>
             <div className="space-y-6">
-              {mockReservations.map(res => (
+              {reservations.map(res => (
                 <div key={res.id} className="group relative rounded-3xl p-6 bg-black/20 border border-white/5 hover:border-blue-500/30 transition-all overflow-hidden">
                   <div className="flex flex-col md:flex-row items-center gap-8">
                     <div className="w-full md:w-48 h-32 rounded-2xl overflow-hidden shadow-2xl">

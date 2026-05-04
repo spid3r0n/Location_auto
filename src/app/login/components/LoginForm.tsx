@@ -11,19 +11,25 @@ import { useAuth } from '@/context/AuthContext';
 export default function LoginForm() {
   const { current } = useTheme();
   const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      login(isAdmin ? 'admin' : 'user');
-      router.push(isAdmin ? '/admin' : '/dashboard');
-    }, 1500);
+    setError(null);
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    const result = login(email, password);
+    setIsLoading(false);
+    if (!result.ok) {
+      setError(result.error ?? 'Unable to sign in.');
+      return;
+    }
+    router.push(result.role === 'admin' ? '/admin' : '/dashboard');
   };
 
   return (
@@ -48,6 +54,9 @@ export default function LoginForm() {
               <input
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="your@email.com"
               />
@@ -61,6 +70,9 @@ export default function LoginForm() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
                 className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="••••••••"
               />
@@ -74,18 +86,11 @@ export default function LoginForm() {
             </div>
           </div>
 
-          <div className="flex items-center">
-            <input
-              id="isAdmin"
-              type="checkbox"
-              checked={isAdmin}
-              onChange={(e) => setIsAdmin(e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            />
-            <label htmlFor="isAdmin" className="ml-2 text-sm text-gray-600">
-              Sign in as admin
-            </label>
-          </div>
+          {error && (
+            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
@@ -109,6 +114,12 @@ export default function LoginForm() {
               Sign up here
             </Link>
           </p>
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-2">Demo Accounts</p>
+          <p className="text-sm">Admin: admin@autoloc.demo / Admin123!</p>
+          <p className="text-sm">User: user@autoloc.demo / User123!</p>
         </div>
       </motion.div>
     </div>
